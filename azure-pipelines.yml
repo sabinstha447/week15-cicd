@@ -1,0 +1,64 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+
+  - stage: Build
+    displayName: 'Stage 1 - Build'
+    jobs:
+      - job: BuildJob
+        displayName: 'Compile and Package Application'
+        steps:
+
+          - task: NodeTool@0
+            displayName: 'Step 1 - Install Node.js 18'
+            inputs:
+              versionSpec: '18.x'
+
+          - script: echo "Installing dependencies..."
+            displayName: 'Step 2 - Install Dependencies'
+
+          - script: npm run build
+            displayName: 'Step 3 - Build Application'
+
+  - stage: Test
+    displayName: 'Stage 2 - Test'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: TestJob
+        displayName: 'Run Automated Tests'
+        steps:
+
+          - task: NodeTool@0
+            displayName: 'Step 1 - Install Node.js 18'
+            inputs:
+              versionSpec: '18.x'
+
+          - script: npm test
+            displayName: 'Step 2 - Run Unit Tests'
+
+  - stage: Deploy
+    displayName: 'Stage 3 - Deploy'
+    dependsOn: Test
+    condition: succeeded()
+    jobs:
+      - job: DeployJob
+        displayName: 'Deploy Application'
+        steps:
+
+          - script: |
+              echo "============================="
+              echo " DEPLOYMENT CONFIRMATION"
+              echo "============================="
+              echo " Build ID   : $(Build.BuildId)"
+              echo " Branch     : $(Build.SourceBranchName)"
+              echo " Triggered  : $(Build.RequestedFor)"
+              echo " Status     : SUCCESS"
+              echo "============================="
+            displayName: 'Step 1 - Print Deployment Confirmation'
