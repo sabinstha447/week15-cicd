@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  vmImage: Default
+  name: Default
 
 stages:
 
@@ -14,17 +14,10 @@ stages:
       - job: BuildJob
         displayName: 'Compile and Package Application'
         steps:
-
-          - task: NodeTool@0
-            displayName: 'Step 1 - Install Node.js 18'
-            inputs:
-              versionSpec: '18.x'
-
           - script: echo "Installing dependencies..."
-            displayName: 'Step 2 - Install Dependencies'
-
+            displayName: 'Step 1 - Install Dependencies'
           - script: npm run build
-            displayName: 'Step 3 - Build Application'
+            displayName: 'Step 2 - Build Application'
 
   - stage: Test
     displayName: 'Stage 2 - Test'
@@ -34,14 +27,8 @@ stages:
       - job: TestJob
         displayName: 'Run Automated Tests'
         steps:
-
-          - task: NodeTool@0
-            displayName: 'Step 1 - Install Node.js 18'
-            inputs:
-              versionSpec: '18.x'
-
-          - script: npm tset
-            displayName: 'Step 2 - Run Unit Tests'
+          - script: npm test
+            displayName: 'Step 1 - Run Unit Tests'
 
   - stage: Deploy
     displayName: 'Stage 3 - Deploy'
@@ -51,7 +38,6 @@ stages:
       - job: DeployJob
         displayName: 'Deploy Application'
         steps:
-
           - script: |
               echo "============================="
               echo " DEPLOYMENT CONFIRMATION"
