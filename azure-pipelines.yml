@@ -40,7 +40,7 @@ stages:
             inputs:
               versionSpec: '18.x'
 
-          - script: npm test
+          - script: npm tset
             displayName: 'Step 2 - Run Unit Tests'
 
   - stage: Deploy
