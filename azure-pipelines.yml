@@ -27,7 +27,7 @@ stages:
       - job: TestJob
         displayName: 'Run Automated Tests'
         steps:
-          - script: npm test
+          - script: npm tset
             displayName: 'Step 1 - Run Unit Tests'
 
   - stage: Deploy
